@@ -1,12 +1,16 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:rsp_game/game/enum.dart';
 import 'package:rsp_game/game/widget/cpu_input.dart';
 import 'package:rsp_game/game/widget/game_result.dart';
 import 'package:rsp_game/game/widget/user_input.dart';
 
+import '../model/result_data.dart';
+
 class GameBody extends StatefulWidget {
+
   const GameBody({super.key});
 
   @override
@@ -17,6 +21,7 @@ class _GameBodyState extends State<GameBody> {
   late bool isDone;
   InputType? _userInput; // nullable인 경우에는 late를 붙여줄 필요 없음
   late InputType _cpuInput;
+  late Result? result;
 
   @override
   void initState() {
@@ -63,10 +68,13 @@ class _GameBodyState extends State<GameBody> {
       case InputType.rock:
         switch (_cpuInput) {
           case InputType.rock:
+            _updateResult(Result.draw);
             return Result.draw;
           case InputType.scissors:
+            _updateResult(Result.playerWin);
             return Result.playerWin;
           case InputType.paper:
+            _updateResult(Result.cpuWin);
             return Result.cpuWin;
         }
       case InputType.scissors:
@@ -88,6 +96,24 @@ class _GameBodyState extends State<GameBody> {
             return Result.draw;
         }
     }
+  }
+
+  void _updateResult(Result newResult)  async{
+    var box = await Hive.openBox<ResultData>('result');
+    // 기존 Result 객체가 없으면 새로 생성
+    ResultData resultData = box.get(0) ?? ResultData();
+
+    // 적절한 필드 업데이트
+    if (newResult == Results.win) {
+    resultData?.win++;
+    } else if (newResult == Results.lose) {
+    resultData.lose++;
+    } else if (newResult == Results.draw) {
+    resultData.draw++;
+    }
+
+    // 업데이트된 Result 객체 저장
+     box.put(0, resultData);
   }
 
   void reset() {

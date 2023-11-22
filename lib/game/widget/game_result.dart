@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rsp_game/game/enum.dart';
 
 class GameResult extends StatelessWidget {
@@ -7,10 +8,7 @@ class GameResult extends StatelessWidget {
   final VoidCallback callback;
 
   const GameResult(
-      {required this.isDone,
-        this.result,
-        required this.callback,
-        super.key});
+      {required this.isDone, this.result, required this.callback, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +24,10 @@ class GameResult extends StatelessWidget {
           TextButton(
             onPressed: () => callback.call(),
             child: const Text('다시하기', style: TextStyle(fontSize: 24)),
+          ),
+          TextButton(
+              onPressed: () => context.pushNamed('result'),
+              child: Text('결과 보러 가기')
           ),
         ],
       );

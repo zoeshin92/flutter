@@ -18,3 +18,9 @@ enum Result {
 
   final String displayString;
 }
+
+enum Results {
+  win,
+  draw,
+  lose;
+}

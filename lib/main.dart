@@ -8,7 +8,8 @@ import 'model/result_data.dart';
 void main() async{
   await Hive.initFlutter();
   Hive.registerAdapter(ResultDataAdapter()); // 생성된 어댑터 등록
-   await Hive.openBox<ResultData>('result');
+  var box = await Hive.openBox<ResultData>('result');
+  var resultBox = box.values.toList();
 
   runApp(
     MaterialApp.router(
@@ -16,7 +17,7 @@ void main() async{
           initialLocation: '/',
         routes: [
           GoRoute(path: '/', name:'home', builder: (context,_)=> const RSPApp()),
-          GoRoute(path: '/result', name:'result', builder: (context,_)=> const ResultPage())
+          GoRoute(path: '/result', name:'result', builder: (context,_)=> ResultPage(results: resultBox))
         ]
       ),
     )
